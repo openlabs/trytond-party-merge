@@ -1,0 +1,5 @@
+[run]
+source = trytond.modules.party_merge
+
+[report]
+omit = */tests/*, */setup.py

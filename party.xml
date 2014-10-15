@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="party_merge_view">
+            <field name="model">party.party.merge.view</field>
+            <field name="type">form</field>
+            <field name="name">party_merge_view_form</field>
+        </record>
+        <record model="ir.action.wizard" id="wizard_party_merge">
+            <field name="name">Merge Parties</field>
+            <field name="wiz_name">party.party.merge</field>
+        </record>
+        <record model="ir.action.keyword" id="party_merge">
+            <field name="keyword">form_action</field>
+            <field name="model">party.party,-1</field>
+            <field name="action" ref="wizard_party_merge"/>
+        </record>
+    </data>
+</tryton>
