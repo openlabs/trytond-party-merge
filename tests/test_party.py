@@ -72,9 +72,6 @@ class TestParty(unittest.TestCase):
 
             self.assertEqual(len(party1.addresses), 3)
 
-            with Transaction().set_context(active_test=False):
-                self.assertEqual(self.Party.search([], count=True), 1)
-
 
 def suite():
     """
