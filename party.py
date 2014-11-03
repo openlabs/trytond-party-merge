@@ -8,6 +8,7 @@
 from trytond.model import ModelView, fields
 from trytond.transaction import Transaction
 from trytond.pool import PoolMeta, Pool
+from trytond.pyson import Eval
 from trytond.wizard import Wizard, StateView, StateTransition, Button
 
 __metaclass__ = PoolMeta
@@ -20,7 +21,6 @@ class Party:
     def merge_into(self, target):
         """Merge current record to target party.
         """
-        Party = Pool().get('party.party')
         ModelField = Pool().get('ir.model.field')
 
         party_fields = ModelField.search([
@@ -28,7 +28,7 @@ class Party:
             ('ttype', '=', 'many2one'),
         ])
 
-        # Inactive current record first
+        # Inactive party first
         self.active = False
         self.save()
 
@@ -50,15 +50,19 @@ class Party:
                 where=(getattr(sql_table, field.name) == self.id)
             ))
 
-        # Finally delete the party.
-        Party.delete([self])
-
 
 class PartyMergeView(ModelView):
     'Party Merge'
     __name__ = 'party.party.merge.view'
 
-    target = fields.Many2One('party.party', 'Target', required=True)
+    duplicates = fields.One2Many(
+        'party.party', None, "Duplicates", readonly=True,
+    )
+    target = fields.Many2One(
+        'party.party', 'Target', required=True,
+        domain=[('id', 'not in', Eval('duplicates'))],
+        depends=['duplicates'],
+    )
 
 
 class PartyMerge(Wizard):
@@ -74,10 +78,13 @@ class PartyMerge(Wizard):
     )
     result = StateTransition()
 
-    def transition_result(self):
-        Party = Pool().get('party.party')
+    def default_merge(self, fields):
+        return {
+            'duplicates': Transaction().context['active_ids'],
+        }
 
-        for party in Party.browse(Transaction().context['active_ids']):
+    def transition_result(self):
+        for party in self.merge.duplicates:
             party.merge_into(self.merge.target)
 
         return 'end'
