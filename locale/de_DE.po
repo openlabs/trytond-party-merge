@@ -1,0 +1,35 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:party.party.merge.view,duplicates:"
+msgid "Duplicates"
+msgstr "Duplikate"
+
+msgctxt "field:party.party.merge.view,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:party.party.merge.view,target:"
+msgid "Target"
+msgstr "Ziel"
+
+msgctxt "model:ir.action,name:wizard_party_merge"
+msgid "Merge Parties"
+msgstr "Parteien zusammenfassen"
+
+msgctxt "model:party.party.merge.view,name:"
+msgid "Party Merge"
+msgstr "Parteien zusammenfassen"
+
+msgctxt "view:party.party.merge.view:"
+msgid "Merge Parties"
+msgstr "Parteien zusammenfassen"
+
+msgctxt "wizard_button:party.party.merge,merge,end:"
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgctxt "wizard_button:party.party.merge,merge,result:"
+msgid "OK"
+msgstr "OK"
