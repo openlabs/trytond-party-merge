@@ -2,22 +2,10 @@
 """
     tests/test_party.py
 
-    :copyright: (C) 2014 by Openlabs Technologies & Consulting (P) Limited
+    :copyright: (C) 2014-2015 by Openlabs Technologies & Consulting (P) Limited
     :license: BSD, see LICENSE for more details.
 """
-import sys
-import os
-DIR = os.path.abspath(os.path.normpath(os.path.join(
-    __file__, '..', '..', '..', '..', '..', 'trytond'
-)))
-if os.path.isdir(DIR):
-    sys.path.insert(0, os.path.dirname(DIR))
 import unittest
-
-if 'DB_NAME' not in os.environ:
-    from trytond.config import CONFIG
-    CONFIG['db_type'] = 'sqlite'
-    os.environ['DB_NAME'] = ':memory:'
 
 from trytond.tests.test_tryton import POOL, USER
 from trytond.tests.test_tryton import DB_NAME, CONTEXT
