@@ -8,8 +8,26 @@ import ConfigParser
 from setuptools import setup, Command
 
 
+config = ConfigParser.ConfigParser()
+config.readfp(open('tryton.cfg'))
+info = dict(config.items('tryton'))
+for key in ('depends', 'extras_depend', 'xml'):
+    if key in info:
+        info[key] = info[key].strip().splitlines()
+major_version, minor_version, _ = info.get('version', '0.0.1').split('.', 2)
+major_version = int(major_version)
+minor_version = int(minor_version)
+
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+
+def get_required_version(name):
+    return '%s >= %s.%s, < %s.%s' % (
+        name, major_version, minor_version,
+        major_version, minor_version + 1
+    )
 
 
 class SQLiteTest(Command):
@@ -27,6 +45,9 @@ class SQLiteTest(Command):
         pass
 
     def run(self):
+        if self.distribution.tests_require:
+            self.distribution.fetch_build_eggs(self.distribution.tests_require)
+
         from trytond.config import CONFIG
         CONFIG['db_type'] = 'sqlite'
         os.environ['DB_NAME'] = ':memory:'
@@ -54,6 +75,9 @@ class PostgresTest(Command):
         pass
 
     def run(self):
+        if self.distribution.tests_require:
+            self.distribution.fetch_build_eggs(self.distribution.tests_require)
+
         from trytond.config import CONFIG
         CONFIG['db_type'] = 'postgresql'
         CONFIG['db_host'] = 'localhost'
@@ -70,17 +94,10 @@ class PostgresTest(Command):
         sys.exit(-1)
 
 
-config = ConfigParser.ConfigParser()
-config.readfp(open('tryton.cfg'))
-info = dict(config.items('tryton'))
-for key in ('depends', 'extras_depend', 'xml'):
-    if key in info:
-        info[key] = info[key].strip().splitlines()
-major_version, minor_version, _ = info.get('version', '0.0.1').split('.', 2)
-major_version = int(major_version)
-minor_version = int(minor_version)
-
 requires = []
+tests_require = [
+    get_required_version('trytond_account_invoice_history'),
+]
 
 MODULE2PREFIX = {}
 
@@ -95,11 +112,7 @@ for dep in info.get('depends', []):
                 minor_version + 1
             )
         )
-requires.append(
-    'trytond >= %s.%s, < %s.%s' % (
-        major_version, minor_version, major_version, minor_version + 1
-    )
-)
+requires.append(get_required_version('trytond'))
 setup(
     name='%s_%s' % (PREFIX, MODULE),
     version=info.get('version', '0.0.1'),
@@ -131,6 +144,7 @@ setup(
     ],
     license='GPL-3',
     install_requires=requires,
+    tests_require=tests_require,
     zip_safe=False,
     entry_points="""
     [trytond.modules]

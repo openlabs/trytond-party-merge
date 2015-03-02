@@ -23,17 +23,30 @@ class Party:
         """
         ModelField = Pool().get('ir.model.field')
 
-        party_fields = ModelField.search([
-            ('relation', '=', 'party.party'),
-            ('ttype', '=', 'many2one'),
-        ])
-
         # Inactive party first
         self.active = False
         self.save()
 
         cursor = Transaction().cursor
 
+        if self._history:
+            # Update the party history first.
+            #
+            # The approach is to make the history of all merged records
+            # also the history of the target record.
+            party_history_table = self.__table_history__()
+            cursor.execute(
+                *party_history_table.update(
+                    columns=[party_history_table.id],
+                    values=[target.id],
+                    where=(party_history_table.id == self.id)
+                )
+            )
+
+        party_fields = ModelField.search([
+            ('relation', '=', 'party.party'),
+            ('ttype', '=', 'many2one'),
+        ])
         for field in party_fields:
             Model = Pool().get(field.model.model)
 
@@ -45,10 +58,23 @@ class Party:
 
             sql_table = Model.__table__()
 
+            # Update direct foreign key references
             cursor.execute(*sql_table.update(
                 columns=[getattr(sql_table, field.name)], values=[target.id],
                 where=(getattr(sql_table, field.name) == self.id)
             ))
+            if Model._history:
+                # If historization is enabled on the model
+                # then the party value in the history should
+                # now point to the target party id since the
+                # history of the current party is already the history of
+                # target party.
+                history_table = Model.__table_history__()
+                cursor.execute(*history_table.update(
+                    columns=[getattr(history_table, field.name)],
+                    values=[target.id],
+                    where=(getattr(history_table, field.name) == self.id)
+                ))
 
 
 class PartyMergeView(ModelView):
