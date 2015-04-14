@@ -3,16 +3,16 @@ Merge parties
 
 .. image:: https://travis-ci.org/openlabs/trytond-party-merge.svg?branch=develop
   :target: https://travis-ci.org/openlabs/trytond-party-merge
-
+  :alt: Build Status
 .. image:: https://pypip.in/download/openlabs_party_merge/badge.svg
   :target: https://pypi.python.org/pypi/openlabs_party_merge/
-
+  :alt: Downloads
 .. image:: https://pypip.in/version/openlabs_party_merge/badge.svg
   :target: https://pypi.python.org/pypi/openlabs_party_merge/
-  
+  :alt: Latest Version
 .. image:: https://pypip.in/status/openlabs_party_merge/badge.svg
   :target: https://pypi.python.org/pypi/openlabs_party_merge/
-  
+  :alt: Development Status
 
 Any tool is dangerous in the hands of a fool. - Will Spencer
 ============================================================
@@ -34,4 +34,3 @@ Some important consequences:
 So I hope, it should now be quite obvious to you now that using
 this module requires great responsibility and should be limited
 to power users who know what they are doing.
-
